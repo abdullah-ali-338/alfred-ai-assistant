@@ -7,7 +7,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Key system environment se load hogi, hardcoded nahi hai
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 @app.route("/")
