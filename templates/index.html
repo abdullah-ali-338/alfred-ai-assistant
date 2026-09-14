@@ -1,1 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background: #0d0d0d;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #ececec;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+        }
+
+        .alfred-brand {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #10a37f;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+            gap: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        }
+
+        .chat-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Messages */
+        .message-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-group.user {
+            justify-content: flex-end;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message.assistant {
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .message.user {
+            background: #10a37f;
+            color: #ffffff;
+        }
+
+        .empty-state {
+            text-align: center;
+            opacity: 0.5;
+            padding: 40px;
+            margin: auto;
+        }
+
+        .empty-state h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px 0 30px 0;
+            flex-shrink: 0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            background: #222222;
+            border-color: rgba(16, 163, 127, 0.3);
+            box-shadow: 0 0 20px rgba(16, 163, 127, 0.1);
+        }
+
+        .input-wrapper textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ececec;
+            font-family: inherit;
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            max-height: 120px;
+            line-height: 1.4;
+        }
+
+        .input-wrapper textarea::placeholder {
+            color: rgba(236, 236, 236, 0.4);
+        }
+
+        .btn-send {
+            background: #10a37f;
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            font-size: 18px;
+        }
+
+        .btn-send:hover:not(:disabled) {
+            background: #0d9678;
+            transform: scale(1.05);
+        }
+
+        .btn-send:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .message {
+                max-width: 85%;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .chat-area {
+                padding: 30px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="alfred-brand">Alfred</div>
+            <h1></h1>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="empty-state">
+                <h2>Start a conversation</h2>
+                <p>Ask me anything and I'll help you out</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea id="messageInput" placeholder="Ask me anything..." rows="1"></textarea>
+                </div>
+                <button class="btn-send" id="sendBtn" title="Send message">
+                    ↑
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', () => {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+        });
+
+        // Handle send button
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Clear input & reset height
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Remove empty state if present
+            const emptyState = chatArea.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            // Render user message
+            addMessage(message, 'user');
+
+            // Disable button during request
+            sendBtn.disabled = true;
+
+            // Temporary thinking indicator
+            const loadingMsg = addMessage('Thinking...', 'assistant');
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    loadingMsg.textContent = data.reply;
+                } else {
+                    loadingMsg.textContent = 'Error: ' + (data.error || 'Failed to fetch response');
+                }
+            } catch (err) {
+                loadingMsg.textContent = 'Error connecting to server. Check Flask terminal.';
+            } finally {
+                sendBtn.disabled = false;
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messageGroup = document.createElement('div');
+            messageGroup.className = `message-group ${sender}`;
+
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${sender}`;
+            messageEl.textContent = text;
+
+            messageGroup.appendChild(messageEl);
+            chatArea.appendChild(messageGroup);
+            chatArea.scrollTop = chatArea.scrollHeight;
+
+            return messageEl;
+        }
+    </script>
+</body>
+</html>
