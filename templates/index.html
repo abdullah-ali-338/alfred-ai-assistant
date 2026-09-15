@@ -224,13 +224,31 @@
         header {
             position: fixed;
             top: 16px;
-            left: 24px;
-            right: 24px;
+            left: 20px;
+            right: 20px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             z-index: 100;
             pointer-events: none;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            pointer-events: auto;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        .mobile-menu-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
         }
 
         .theme-toggle {
@@ -246,6 +264,7 @@
             transition: all 0.2s ease;
             flex-shrink: 0;
             color: var(--text);
+            margin-left: auto;
         }
 
         .theme-toggle:hover {
@@ -260,16 +279,17 @@
 
         .header-brand {
             position: fixed;
-            top: 50%;
+            top: 48%;
             left: 50%;
-            transform: translate(-50%, -240px);
+            transform: translate(-50%, -200px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
             z-index: 110;
             cursor: pointer;
             pointer-events: auto;
+            text-align: center;
             transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
                         left 0.65s cubic-bezier(0.16, 1, 0.3, 1),
                         top 0.65s cubic-bezier(0.16, 1, 0.3, 1),
@@ -287,7 +307,8 @@
             box-shadow: 0 10px 25px rgba(16, 163, 127, 0.25);
             transition: width 0.65s cubic-bezier(0.16, 1, 0.3, 1),
                         height 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        border-radius 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+                        border-radius 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .brand-logo svg {
@@ -298,11 +319,26 @@
                         height 0.65s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        .brand-titles {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
         h1 {
-            font-size: 2rem;
+            font-size: 1.85rem;
             font-weight: 700;
             letter-spacing: -0.5px;
             transition: font-size 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .brand-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            opacity: 1;
+            transition: opacity 0.3s ease, height 0.3s ease;
         }
 
         body.chat-active .header-brand {
@@ -311,6 +347,7 @@
             transform: translate(0, 0);
             flex-direction: row;
             gap: 10px;
+            text-align: left;
         }
 
         body.chat-active:has(.sidebar:hover) .header-brand,
@@ -330,9 +367,18 @@
             height: 20px;
         }
 
+        body.chat-active .brand-titles {
+            align-items: flex-start;
+        }
+
         body.chat-active h1 {
             font-size: 1.25rem;
             letter-spacing: -0.3px;
+        }
+
+        body.chat-active .brand-subtitle {
+            display: none;
+            opacity: 0;
         }
 
         .workspace {
@@ -437,7 +483,7 @@
             background: transparent;
             border: none;
             outline: none;
-            font-size: 1rem;
+            font-size: 0.98rem;
             font-weight: 500;
             color: var(--text);
             resize: none;
@@ -491,8 +537,8 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 10px;
-            margin-top: 18px;
+            gap: 8px;
+            margin-top: 14px;
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
 
@@ -506,9 +552,9 @@
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 20px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -821,67 +867,91 @@
 
         @media (max-width: 768px) {
             header {
-                top: 10px;
-                left: 14px;
-                right: 14px;
+                top: 14px;
+                left: 16px;
+                right: 16px;
             }
 
-            .header-brand,
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .header-brand {
+                top: 38%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                gap: 12px;
+            }
+
+            .brand-logo {
+                width: 52px;
+                height: 52px;
+                border-radius: 15px;
+            }
+
+            .brand-logo svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .brand-subtitle {
+                font-size: 0.84rem;
+            }
+
             body.chat-active .header-brand {
-                position: fixed;
-                top: 10px;
-                left: 14px;
-                right: auto;
+                top: 14px;
+                left: 52px;
                 transform: none;
-                flex-direction: row;
-                gap: 10px;
+                gap: 8px;
             }
 
-            .brand-logo,
             body.chat-active .brand-logo {
-                width: 36px;
-                height: 36px;
-                border-radius: 10px;
-                box-shadow: none;
+                width: 34px;
+                height: 34px;
+                border-radius: 9px;
             }
 
-            .brand-logo svg,
             body.chat-active .brand-logo svg {
-                width: 20px;
-                height: 20px;
+                width: 18px;
+                height: 18px;
             }
 
-            h1,
             body.chat-active h1 {
-                font-size: 1.25rem;
-                letter-spacing: -0.3px;
+                font-size: 1.15rem;
             }
 
             .workspace {
-                padding: 58px 8px 6px 8px;
+                padding: 64px 8px 8px 8px;
             }
 
-            .chat-viewport {
-                opacity: 1;
-                pointer-events: auto;
-            }
-
-            .input-wrapper,
-            body.chat-active .input-wrapper {
-                position: relative;
+            .input-wrapper {
                 top: auto;
-                left: auto;
-                transform: none;
-                width: 100%;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 16px);
                 max-width: 100%;
             }
 
-            .quick-chips-container {
-                display: none !important;
+            body.chat-active .input-wrapper {
+                bottom: auto;
+                transform: none;
+                width: 100%;
             }
 
-            .input-bottom-bar {
+            .quick-chips-container {
                 display: flex;
+                gap: 6px;
+                margin-top: 12px;
+            }
+
+            .chip {
+                padding: 6px 12px;
+                font-size: 0.76rem;
             }
 
             .message-wrapper { max-width: 90%; }
@@ -913,6 +983,20 @@
         </div>
     </aside>
 
+    <header>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle sidebar">
+            <svg viewBox="0 0 24 24">
+                <line x1="3" y1="7" x2="21" y2="7"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="17" x2="21" y2="17"></line>
+            </svg>
+        </button>
+
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+            <svg id="theme-icon" viewBox="0 0 24 24"></svg>
+        </button>
+    </header>
+
     <div class="header-brand" id="header-brand">
         <div class="brand-logo">
             <svg viewBox="0 0 24 24">
@@ -922,14 +1006,11 @@
                 <rect x="14" y="14" width="7" height="7" rx="2"></rect>
             </svg>
         </div>
-        <h1>Widget AI</h1>
+        <div class="brand-titles">
+            <h1>Widget AI</h1>
+            <span class="brand-subtitle">What do you want to know today?</span>
+        </div>
     </div>
-
-    <header>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-            <svg id="theme-icon" viewBox="0 0 24 24"></svg>
-        </button>
-    </header>
 
     <main class="workspace" id="workspace">
         <div class="chat-viewport">
@@ -996,6 +1077,7 @@
         const themeIcon = document.getElementById('theme-icon');
         const sidebar = document.getElementById('sidebar');
         const headerBrand = document.getElementById('header-brand');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const modalOverlay = document.getElementById('modal-overlay');
         const openSettingsBtn = document.getElementById('open-settings-btn');
         const closeSettingsBtn = document.getElementById('close-settings-btn');
@@ -1050,14 +1132,19 @@
             localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         });
 
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('mobile-open');
+        });
+
         headerBrand.addEventListener('click', () => {
-            if (window.innerWidth <= 768 || document.body.classList.contains('chat-active')) {
+            if (document.body.classList.contains('chat-active')) {
                 sidebar.classList.toggle('mobile-open');
             }
         });
 
         document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && !headerBrand.contains(e.target)) {
+            if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target) && !headerBrand.contains(e.target)) {
                 sidebar.classList.remove('mobile-open');
             }
         });
@@ -1075,7 +1162,7 @@
         }
 
         input.addEventListener('input', () => {
-            const baseH = (window.innerWidth <= 768 || document.body.classList.contains('chat-active')) ? 24 : 26;
+            const baseH = document.body.classList.contains('chat-active') ? 24 : 26;
             input.style.height = baseH + 'px';
             input.style.height = Math.min(input.scrollHeight, 100) + 'px';
             const box = input.closest('.input-box');
@@ -1105,7 +1192,7 @@
             document.body.classList.remove('chat-active');
             sidebar.classList.remove('mobile-open');
             input.value = '';
-            input.style.height = window.innerWidth <= 768 ? '24px' : '26px';
+            input.style.height = '26px';
             renderShuffledChips();
         }
 
