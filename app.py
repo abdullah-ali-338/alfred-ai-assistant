@@ -1,23 +1,24 @@
 import os
 import sys
 from flask import Flask, render_template, request, jsonify
-from google import genai
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
 
-api_key = os.environ.get("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key)
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-INSTRUCTIONS = """
-You are Widget AI. Follow these rules strictly:
-- Give direct, crisp, and high-value answers.
-- Jump straight to the point in the first sentence. No greetings or pleasantries like 'Sure', 'Hello', or 'Here is...'.
-- Use short bullet points for lists.
-- Keep the overall response brief and under 150 words unless writing code.
-- Format all code in proper markdown code blocks.
+SYSTEM_PROMPT = """
+You are Widget AI, a concise and sharp technical assistant.
+
+Rules:
+1. Give direct answers immediately in sentence 1. Never use greetings, filler, or intro setups (e.g., avoid "Hello", "Sure!", "Here is...").
+2. Keep explanations high density and under 150 words.
+3. Use bullet points for itemized details.
+4. Format all code snippets in proper markdown code blocks with language names.
+5. No concluding summaries or repetitive wrap-ups at the end.
 """
 
 @app.route("/")
@@ -33,17 +34,21 @@ def chat():
         if not user_msg:
             return jsonify({"error": "Message cannot be empty."}), 400
 
-        formatted_prompt = f"{INSTRUCTIONS}\n\nUser Question: {user_msg}\nWidget AI Response:"
-
-        response = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=formatted_prompt
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_msg}
+            ],
+            temperature=0.3,
+            max_tokens=350
         )
 
-        return jsonify({"reply": response.text})
+        reply = completion.choices[0].message.content
+        return jsonify({"reply": reply})
 
     except Exception as e:
-        print(f"Server Error: {str(e)}", file=sys.stderr)
+        print(f"Groq API Error: {str(e)}", file=sys.stderr)
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
