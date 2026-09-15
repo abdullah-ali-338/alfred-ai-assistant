@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
             --bg-dark: #0f0f0f;
@@ -205,9 +206,56 @@
             padding: 12px 16px;
             border-radius: 16px;
             font-size: 0.95rem;
-            line-height: 1.5;
+            line-height: 1.55;
             font-weight: 500;
             word-wrap: break-word;
+        }
+
+        /* Clean Markdown Styling */
+        .bot-message p {
+            margin-bottom: 8px;
+        }
+
+        .bot-message p:last-child {
+            margin-bottom: 0;
+        }
+
+        .bot-message ul, .bot-message ol {
+            margin: 6px 0 8px 18px;
+            padding: 0;
+        }
+
+        .bot-message li {
+            margin-bottom: 4px;
+        }
+
+        .bot-message code {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.88rem;
+        }
+
+        body.light-mode .bot-message code {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .bot-message pre {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 10px 14px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+
+        body.light-mode .bot-message pre {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        .bot-message pre code {
+            background: transparent;
+            padding: 0;
         }
 
         .user-message {
@@ -282,6 +330,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            margin-top: 4px;
         }
 
         .retry-btn:hover {
@@ -490,6 +539,7 @@
     <script>
         const form = document.getElementById('chat-form');
         const input = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
         const chatContainer = document.getElementById('chat-container');
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
@@ -581,6 +631,7 @@
 
             const thinkingMsg = appendMessage('', 'bot-message', true);
             const msgGroup = thinkingMsg.closest('.message-group');
+            sendBtn.disabled = true;
 
             try {
                 const response = await fetch('/chat', {
@@ -590,14 +641,20 @@
                 });
 
                 const data = await response.json();
-                const reply = data.reply || 'No response received.';
                 
-                thinkingMsg.textContent = reply;
-                thinkingMsg.classList.remove('thinking');
+                if (data.reply) {
+                    thinkingMsg.innerHTML = marked.parse(data.reply);
+                } else {
+                    thinkingMsg.textContent = data.error || 'No response received.';
+                }
             } catch (err) {
                 thinkingMsg.textContent = 'Server connection failed. Please try again.';
                 const retryBtn = addRetryButton(msgGroup);
                 msgGroup.appendChild(retryBtn);
+            } finally {
+                thinkingMsg.classList.remove('thinking');
+                sendBtn.disabled = false;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
             }
         }
 
