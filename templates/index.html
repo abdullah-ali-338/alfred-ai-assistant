@@ -55,6 +55,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 20px 16px;
+            overflow: hidden;
             transition: background 0.3s ease, color 0.3s ease;
         }
 
@@ -82,8 +83,9 @@
             justify-content: space-between;
             width: 100%;
             max-width: 900px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             gap: 14px;
+            z-index: 10;
         }
 
         .header-left {
@@ -166,17 +168,42 @@
             transition: transform 0.3s ease;
         }
 
-        #chat-container {
+        /* --- CHAT WRAPPER WITH LIQUID EDGE FADE & BLUR --- */
+        .chat-viewport {
             width: 100%;
             max-width: 900px;
             flex: 1;
+            position: relative;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chat-container {
+            width: 100%;
+            height: 100%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 16px;
-            padding: 16px 8px;
+            padding: 24px 8px;
             scrollbar-width: thin;
             scrollbar-color: var(--surface) transparent;
+            /* Liquid smooth fade on top and bottom */
+            mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 38px,
+                black calc(100% - 38px),
+                transparent 100%
+            );
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                transparent 0%,
+                black 38px,
+                black calc(100% - 38px),
+                transparent 100%
+            );
         }
 
         #chat-container::-webkit-scrollbar {
@@ -380,23 +407,25 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- PERFECT INPUT BOX PLACEMENT --- */
+        /* Input Area */
         .input-wrapper {
             width: 100%;
             max-width: 900px;
             margin-bottom: 8px;
+            margin-top: 6px;
             padding: 0 4px;
+            z-index: 10;
         }
 
         .input-box {
             display: flex;
-            align-items: center; /* Center-aligned for clean single-line look */
+            align-items: center;
             gap: 10px;
             background: var(--surface);
             backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 8px 10px 8px 18px; /* Balanced top & bottom padding */
+            padding: 8px 10px 8px 18px;
             transition: all 0.2s ease;
         }
 
@@ -417,7 +446,7 @@
             height: 24px;
             min-height: 24px;
             max-height: 130px;
-            line-height: 24px; /* Matches height perfectly */
+            line-height: 24px;
             padding: 0;
             margin: 0;
             display: block;
@@ -448,7 +477,7 @@
 
         @media (max-width: 768px) {
             body { padding: 12px 10px; }
-            header { margin-bottom: 12px; }
+            header { margin-bottom: 8px; }
             h1 { font-size: 1.2rem; }
             .status-badge { display: none; }
             .message-wrapper { max-width: 90%; }
@@ -482,19 +511,21 @@
         </button>
     </header>
 
-    <div id="chat-container">
-        <div class="message-group bot">
-            <div class="message-wrapper">
-                <div class="message bot-message">
-                    Hi! I'm Widget. How can I assist you right now?
-                </div>
-                <div class="quick-chips-wrapper" id="quick-chips">
-                    <button class="chip" onclick="submitChip('Explain DNS resolution in simple terms')">Explain DNS resolution</button>
-                    <button class="chip" onclick="submitChip('Write a Python script to scrape website title')">Python Web Scraper</button>
-                    <button class="chip" onclick="submitChip('Key differences between TCP and UDP')">TCP vs UDP</button>
-                </div>
-                <div class="message-meta">
-                    <span class="message-time" id="init-time"></span>
+    <div class="chat-viewport">
+        <div id="chat-container">
+            <div class="message-group bot">
+                <div class="message-wrapper">
+                    <div class="message bot-message">
+                        Hi! I'm Widget. How can I assist you right now?
+                    </div>
+                    <div class="quick-chips-wrapper" id="quick-chips">
+                        <button class="chip" onclick="submitChip('Explain DNS resolution in simple terms')">Explain DNS resolution</button>
+                        <button class="chip" onclick="submitChip('Write a Python script to scrape website title')">Python Web Scraper</button>
+                        <button class="chip" onclick="submitChip('Key differences between TCP and UDP')">TCP vs UDP</button>
+                    </div>
+                    <div class="message-meta">
+                        <span class="message-time" id="init-time"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -522,7 +553,6 @@
 
         initTime.textContent = getFormattedTime();
 
-        // Exact line auto-height handler
         input.addEventListener('input', () => {
             input.style.height = '24px';
             input.style.height = Math.min(input.scrollHeight, 130) + 'px';
@@ -534,7 +564,6 @@
             }
         });
 
-        // Submit handling
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -542,7 +571,6 @@
             }
         });
 
-        // Theme management
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (!prefersDark) {
             document.body.classList.add('light-mode');
@@ -622,7 +650,6 @@
             metaElement.appendChild(copyBtn);
         }
 
-        // Streaming text animation
         function streamMarkdownText(element, fullText, metaElement) {
             element.classList.remove('thinking');
             const words = fullText.split(' ');
@@ -679,7 +706,7 @@
                 }
             } catch (err) {
                 msgDiv.classList.remove('thinking');
-                msgDiv.textContent = 'Server connection failed. Check your network or server logs.';
+                msgDiv.textContent = 'Server connection failed. Please try again.';
             } finally {
                 sendBtn.disabled = false;
             }
