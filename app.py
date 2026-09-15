@@ -36,7 +36,7 @@ def chat():
         formatted_prompt = f"{INSTRUCTIONS}\n\nUser Question: {user_msg}\nWidget AI Response:"
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.6-flash",
             contents=formatted_prompt
         )
 
