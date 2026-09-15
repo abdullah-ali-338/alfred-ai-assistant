@@ -1,19 +1,18 @@
 # Widget AI
 
-A lightweight, low-latency conversational assistant powered by Flask and Google's Gemini Flash model. Features a responsive, glassmorphic UI with light/dark theme support, dynamic Markdown rendering, and custom DNS integration.
+A lightweight, low-latency conversational assistant powered by Flask and Groq's high-speed inference engine. Features a responsive glassmorphic UI, zero-dependency theme switching, dynamic Markdown rendering, and custom DNS integration.
 
-**Live Demo:** [https://widget-ai.duckdns.org](https://widget-ai.duckdns.org)
+**Live Demo:** https://widget-ai.duckdns.org
 
 ---
 
 ## Features
 
-- **LLM Core**: Google's Gemini Flash via the official `google-genai` SDK
-- **Strict Response Framing**: Structured system rules for concise, high-density outputs
-- **Modern UI**: Custom CSS with Plus Jakarta Sans, glassmorphism, responsive mobile layouts, and zero-dependency dark/light mode toggle
-- **Rich Text Rendering**: Integrated `marked.js` for lists, bold emphasis, and formatted code blocks
-- **Error Resilience**: Connection retry mechanisms and asynchronous fetch handling
-- **Cloud Deployed**: Continuous deployment via Render with custom DNS routing over DuckDNS
+- **High-Speed Inference**: Open-weights models on Groq for sub-second token generation
+- **Deterministic Responses**: Structured system prompts for direct, fluff-free explanations
+- **Modern Interface**: Custom CSS with Plus Jakarta Sans, glassmorphism, responsive mobile views, and theme toggling
+- **Native Markdown**: Marked.js integration for formatted lists, bold text, and code blocks
+- **Automated Cloud Hosting**: Deployed on Render with custom DNS routing via DuckDNS
 
 ---
 
@@ -21,23 +20,23 @@ A lightweight, low-latency conversational assistant powered by Flask and Google'
 
 | Layer | Technology |
 | --- | --- |
-| Backend | Python 3, Flask, Gunicorn |
-| Frontend | HTML5, CSS3, Vanilla JavaScript |
-| AI Integration | Google GenAI SDK |
-| Formatting | Marked.js |
-| Hosting | Render |
-| DNS/Domain | DuckDNS |
+| Backend | Python 3, Flask |
+| LLM Provider | Groq Cloud SDK |
+| Frontend | Vanilla HTML5, CSS3, JavaScript |
+| Parser | Marked.js |
+| Deployment | Render |
+| DNS | DuckDNS |
 
 ---
 
 ## Project Structure
 
 ```
-├── app.py              # Flask server, routes, Gemini SDK integration
-├── requirements.txt    # Python dependencies
-├── .env.example        # Environment variable template
+├── app.py              # Flask server and Groq API implementation
+├── requirements.txt    # Production dependencies
+├── .env                # Environment configuration
 └── templates/
-    └── index.html      # Frontend interface, styles, client-side logic
+    └── index.html      # Glassmorphic UI and client-side logic
 ```
 
 ---
@@ -47,9 +46,9 @@ A lightweight, low-latency conversational assistant powered by Flask and Google'
 ### Prerequisites
 
 - Python 3.10+
-- Gemini API key from [Google AI Studio](https://aistudio.google.com/)
+- Groq API Key from [console.groq.com](https://console.groq.com)
 
-### Local Installation
+### Installation
 
 1. Clone the repository:
 ```bash
@@ -60,9 +59,9 @@ cd widget-ai
 2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
-# On Windows:
+# Windows:
 venv\Scripts\activate
-# On macOS/Linux:
+# Linux/macOS:
 source venv/bin/activate
 ```
 
@@ -71,13 +70,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Create a `.env` file in the project root:
+4. Configure environment variables in `.env`:
 ```
-GEMINI_API_KEY=your_actual_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 PORT=5000
 ```
 
-5. Start the application:
+5. Run the server:
 ```bash
 python app.py
 ```
@@ -88,27 +87,26 @@ Open `http://localhost:5000` in your browser.
 
 ## Deployment
 
-### Render Setup
+### Render Configuration
 
-1. Connect your GitHub repository to Render as a Web Service
-2. Set configuration:
-   - Runtime: Python 3
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `python app.py`
-3. Add environment variables:
-   - `GEMINI_API_KEY` = your Google AI Studio key
+1. Create a New Web Service connected to your repository
+2. Build Command: `pip install -r requirements.txt`
+3. Start Command: `python app.py`
+4. Add environment variable:
+   - Key: `GROQ_API_KEY`
+   - Value: your Groq API key
 
 ### Custom Domain (DuckDNS)
 
-1. Reserve a free subdomain at [DuckDNS](https://www.duckdns.org/)
-2. Point the A Record to Render's routing IP:
+1. Create a subdomain on [DuckDNS](https://www.duckdns.org/)
+2. Map your DuckDNS domain to Render IP:
 ```
 216.24.57.1
 ```
-3. Add your custom domain in Render Settings > Custom Domains for automatic SSL certificates
+3. Add the domain in Render dashboard under Settings > Custom Domains
 
 ---
 
 ## License
 
-This project is intended for educational and academic purposes.
+This project is licensed for educational and personal purposes.
