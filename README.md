@@ -1,6 +1,6 @@
 # Widget AI
 
-A lightweight, low-latency conversational assistant powered by Flask and Groq's high-speed inference engine. Features a responsive glassmorphic UI, zero-dependency theme switching, dynamic Markdown rendering, and custom DNS integration.
+A high-performance, optimized AI assistant featuring a dynamic glass-morphic interface, sub-second Groq inference, session history management, and custom theme switching.
 
 **Live Demo:** https://widget-ai.duckdns.org
 
@@ -8,47 +8,41 @@ A lightweight, low-latency conversational assistant powered by Flask and Groq's 
 
 ## Features
 
-- **High-Speed Inference**: Open-weights models on Groq for sub-second token generation
-- **Deterministic Responses**: Structured system prompts for direct, fluff-free explanations
-- **Modern Interface**: Custom CSS with Plus Jakarta Sans, glassmorphism, responsive mobile views, and theme toggling
-- **Native Markdown**: Marked.js integration for formatted lists, bold text, and code blocks
-- **Automated Cloud Hosting**: Deployed on Render with custom DNS routing via DuckDNS
+- **Dynamic Landing State**: Clean central launch view with randomized quick-start prompt chips that smoothly transition into a chat session
+- **High-Speed Inference**: Open-weights models on Groq LPUs for instant token streaming
+- **Adaptive UI/UX**: Fully responsive layout optimized for mobile keyboards and desktop viewports with seamless hover-triggered history sidebar
+- **Customizable Settings**: Modal toggle for typing stream animation and chat history clearing
+- **Theme Customization**: Native light and dark mode with minimalist vector icons
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
+| Component | Technology |
 | --- | --- |
-| Backend | Python 3, Flask |
-| LLM Provider | Groq Cloud SDK |
-| Frontend | Vanilla HTML5, CSS3, JavaScript |
-| Parser | Marked.js |
-| Deployment | Render |
-| DNS | DuckDNS |
+| Backend | Python, Flask |
+| LLM Provider | Groq Cloud API |
+| Frontend | Vanilla JavaScript, HTML5, CSS3, Marked.js |
+| Hosting | Render |
+| DNS Routing | DuckDNS |
 
 ---
 
 ## Project Structure
 
 ```
-├── app.py              # Flask server and Groq API implementation
-├── requirements.txt    # Production dependencies
-├── .env                # Environment configuration
+├── app.py              # Flask server and Groq API proxy
+├── requirements.txt    # Python dependencies
+├── .env                # Environment keys (Git ignored)
 └── templates/
-    └── index.html      # Glassmorphic UI and client-side logic
+    └── index.html      # Complete single-file frontend
 ```
 
 ---
 
 ## Getting Started
 
-### Prerequisites
-
-- Python 3.10+
-- Groq API Key from [console.groq.com](https://console.groq.com)
-
-### Installation
+### Local Development
 
 1. Clone the repository:
 ```bash
@@ -56,13 +50,10 @@ git clone https://github.com/your-username/widget-ai.git
 cd widget-ai
 ```
 
-2. Create and activate a virtual environment:
+2. Set up a virtual environment:
 ```bash
 python -m venv venv
-# Windows:
-venv\Scripts\activate
-# Linux/macOS:
-source venv/bin/activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies:
@@ -70,13 +61,12 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Configure environment variables in `.env`:
+4. Create a `.env` file in the root:
 ```
-GROQ_API_KEY=your_groq_api_key_here
-PORT=5000
+GROQ_API_KEY=your_actual_groq_api_key_here
 ```
 
-5. Run the server:
+5. Run the application:
 ```bash
 python app.py
 ```
@@ -89,24 +79,20 @@ Open `http://localhost:5000` in your browser.
 
 ### Render Configuration
 
-1. Create a New Web Service connected to your repository
+1. Connect your GitHub repository as a New Web Service on Render
 2. Build Command: `pip install -r requirements.txt`
 3. Start Command: `python app.py`
-4. Add environment variable:
-   - Key: `GROQ_API_KEY`
-   - Value: your Groq API key
+4. Add environment variable under Environment settings:
+   - `GROQ_API_KEY`: Your Groq API key
 
 ### Custom Domain (DuckDNS)
 
-1. Create a subdomain on [DuckDNS](https://www.duckdns.org/)
-2. Map your DuckDNS domain to Render IP:
-```
-216.24.57.1
-```
-3. Add the domain in Render dashboard under Settings > Custom Domains
+1. Register a subdomain at [DuckDNS](https://www.duckdns.org/)
+2. Map it to your Render deployment IP
+3. Add your custom domain under Settings > Custom Domains in Render dashboard
 
 ---
 
 ## License
 
-This project is licensed for educational and personal purposes.
+This project is for educational and personal purposes.
