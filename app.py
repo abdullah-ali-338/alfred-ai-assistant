@@ -35,7 +35,7 @@ def chat():
             return jsonify({"error": "Message cannot be empty."}), 400
 
         completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_msg}
