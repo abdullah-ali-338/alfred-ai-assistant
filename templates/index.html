@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Widget AI</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2309090b'/><text y='.9em' font-size='65' x='18' fill='%235eead4' font-family='monospace' font-weight='bold'>&gt;_</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,20 +12,20 @@
     <style>
         :root {
             --bg-dark: #0f0f0f;
-            --bg-dark-secondary: #1a1a1a;
-            --surface-dark: rgba(255, 255, 255, 0.08);
+            --bg-dark-secondary: #161616;
+            --surface-dark: rgba(255, 255, 255, 0.06);
             --surface-dark-hover: rgba(255, 255, 255, 0.12);
-            --border-dark: rgba(255, 255, 255, 0.1);
+            --border-dark: rgba(255, 255, 255, 0.08);
             --text-dark: #e5e5e5;
-            --text-dark-muted: #a0a0a0;
+            --text-dark-muted: #8e8e8e;
             --primary-dark: #10a37f;
 
-            --bg-light: #f7f7f7;
+            --bg-light: #f7f7f8;
             --bg-light-secondary: #ffffff;
-            --surface-light: rgba(0, 0, 0, 0.05);
+            --surface-light: rgba(0, 0, 0, 0.04);
             --surface-light-hover: rgba(0, 0, 0, 0.08);
             --border-light: rgba(0, 0, 0, 0.08);
-            --text-light: #0d0d0d;
+            --text-light: #111111;
             --text-light-muted: #6b6b6b;
             --primary-light: #0d9678;
 
@@ -37,6 +37,7 @@
             --text: var(--text-dark);
             --text-muted: var(--text-dark-muted);
             --primary: var(--primary-dark);
+            --sidebar-width: 260px;
         }
 
         * {
@@ -44,19 +45,23 @@
             margin: 0;
             padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            width: 100%;
+            overflow: hidden;
         }
 
         body {
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
             color: var(--text);
-            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 16px;
-            overflow: hidden;
             transition: background 0.3s ease, color 0.3s ease;
+            position: relative;
         }
 
         body.light-mode {
@@ -73,88 +78,210 @@
         .glass {
             background: var(--surface);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
-            border-radius: 20px;
+        }
+
+        .sidebar-hover-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 16px;
+            height: 100dvh;
+            z-index: 999;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100dvh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 14px;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar:hover,
+        .sidebar-hover-zone:hover + .sidebar,
+        .sidebar.mobile-open {
+            transform: translateX(0);
+        }
+
+        .new-chat-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .new-chat-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary);
+        }
+
+        .new-chat-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5;
+        }
+
+        .history-section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            padding-left: 6px;
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .history-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.15s ease;
+        }
+
+        .history-item:hover {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .history-item.active {
+            background: var(--surface-hover);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 9px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sidebar-btn:hover {
+            background: var(--surface);
+        }
+
+        .sidebar-btn svg {
+            width: 17px;
+            height: 17px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
         }
 
         header {
+            position: fixed;
+            top: 16px;
+            left: 24px;
+            right: 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 100%;
-            max-width: 900px;
-            margin-bottom: 12px;
-            gap: 14px;
-            z-index: 10;
+            z-index: 100;
+            pointer-events: none;
+            transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body:has(.sidebar:hover) header,
+        body:has(.sidebar-hover-zone:hover) header {
+            left: calc(var(--sidebar-width) + 24px);
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            pointer-events: auto;
+            cursor: pointer;
         }
 
         .brand-logo {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: var(--primary);
-            border-radius: 12px;
+            border-radius: 10px;
             display: grid;
             place-items: center;
             flex-shrink: 0;
         }
 
         .brand-logo svg {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             fill: var(--bg);
         }
 
         h1 {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 700;
             letter-spacing: -0.3px;
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            color: var(--text-muted);
-        }
-
-        .pulse-dot {
-            width: 7px;
-            height: 7px;
-            background-color: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(16, 163, 127, 0.7);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 163, 127, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 163, 127, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 163, 127, 0); }
-        }
-
         .theme-toggle {
-            width: 42px;
-            height: 42px;
+            pointer-events: auto;
+            width: 38px;
+            height: 38px;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 11px;
             cursor: pointer;
             display: grid;
             place-items: center;
             transition: all 0.2s ease;
             flex-shrink: 0;
+            color: var(--text);
         }
 
         .theme-toggle:hover {
@@ -164,11 +291,20 @@
         .theme-toggle svg {
             width: 18px;
             height: 18px;
-            fill: var(--text);
-            transition: transform 0.3s ease;
+            display: block;
         }
 
-        /* --- CHAT WRAPPER WITH LIQUID EDGE FADE & BLUR --- */
+        .workspace {
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 72px 16px 8px 16px;
+            min-height: 0;
+        }
+
         .chat-viewport {
             width: 100%;
             max-width: 900px;
@@ -186,38 +322,15 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            padding: 24px 8px;
+            padding: 16px 6px;
             scrollbar-width: thin;
             scrollbar-color: var(--surface) transparent;
-            /* Liquid smooth fade on top and bottom */
-            mask-image: linear-gradient(
-                to bottom,
-                transparent 0%,
-                black 38px,
-                black calc(100% - 38px),
-                transparent 100%
-            );
-            -webkit-mask-image: linear-gradient(
-                to bottom,
-                transparent 0%,
-                black 38px,
-                black calc(100% - 38px),
-                transparent 100%
-            );
+            mask-image: linear-gradient(to bottom, transparent 0%, black 28px, black calc(100% - 28px), transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 28px, black calc(100% - 28px), transparent 100%);
         }
 
-        #chat-container::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #chat-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        #chat-container::-webkit-scrollbar-thumb {
-            background: var(--surface);
-            border-radius: 3px;
-        }
+        #chat-container::-webkit-scrollbar { width: 4px; }
+        #chat-container::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 2px; }
 
         .quick-chips-wrapper {
             display: flex;
@@ -230,9 +343,9 @@
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 7px 14px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -248,37 +361,27 @@
             display: flex;
             align-items: flex-end;
             gap: 8px;
-            animation: slideIn 0.25s ease-out;
+            animation: slideIn 0.2s ease-out;
         }
 
-        .message-group.user {
-            justify-content: flex-end;
-        }
-
-        .message-group.bot {
-            justify-content: flex-start;
-        }
+        .message-group.user { justify-content: flex-end; }
+        .message-group.bot { justify-content: flex-start; }
 
         .message-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            max-width: 82%;
+            gap: 4px;
+            max-width: 84%;
         }
 
-        .message-group.user .message-wrapper {
-            align-items: flex-end;
-        }
-
-        .message-group.bot .message-wrapper {
-            align-items: flex-start;
-        }
+        .message-group.user .message-wrapper { align-items: flex-end; }
+        .message-group.bot .message-wrapper { align-items: flex-start; }
 
         .message {
-            padding: 12px 18px;
+            padding: 11px 16px;
             border-radius: 18px;
-            font-size: 0.94rem;
-            line-height: 1.55;
+            font-size: 0.92rem;
+            line-height: 1.5;
             font-weight: 500;
             word-wrap: break-word;
         }
@@ -292,65 +395,46 @@
         .bot-message {
             background: var(--surface);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             color: var(--text);
             border-radius: 4px 18px 18px 18px;
         }
 
-        .bot-message p {
-            margin-bottom: 8px;
-        }
-
-        .bot-message p:last-child {
-            margin-bottom: 0;
-        }
-
-        .bot-message ul, .bot-message ol {
-            margin: 6px 0 8px 20px;
-        }
-
-        .bot-message li {
-            margin-bottom: 4px;
-        }
-
+        .bot-message p { margin-bottom: 8px; }
+        .bot-message p:last-child { margin-bottom: 0; }
+        .bot-message ul, .bot-message ol { margin: 6px 0 8px 18px; }
+        .bot-message li { margin-bottom: 4px; }
         .bot-message code {
-            background: rgba(0, 0, 0, 0.28);
-            padding: 2px 6px;
-            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.26);
+            padding: 2px 5px;
+            border-radius: 4px;
             font-family: monospace;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
         }
 
-        body.light-mode .bot-message code {
-            background: rgba(0, 0, 0, 0.08);
-        }
+        body.light-mode .bot-message code { background: rgba(0, 0, 0, 0.08); }
 
         .bot-message pre {
-            background: rgba(0, 0, 0, 0.38);
-            padding: 12px 14px;
-            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 10px 12px;
+            border-radius: 8px;
             overflow-x: auto;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
-        body.light-mode .bot-message pre {
-            background: rgba(0, 0, 0, 0.06);
-        }
-
-        .bot-message pre code {
-            background: transparent;
-            padding: 0;
-        }
+        body.light-mode .bot-message pre { background: rgba(0, 0, 0, 0.06); }
+        .bot-message pre code { background: transparent; padding: 0; }
 
         .message-meta {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             padding: 0 4px;
         }
 
         .message-time {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
         }
 
@@ -359,36 +443,26 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 2px 6px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
+            padding: 2px 4px;
+            border-radius: 4px;
         }
 
-        .copy-btn:hover {
-            color: var(--text);
-            background: var(--surface);
-        }
-
-        .copy-btn svg {
-            width: 12px;
-            height: 12px;
-            fill: currentColor;
-        }
+        .copy-btn svg { width: 11px; height: 11px; fill: currentColor; }
 
         .thinking {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             align-items: center;
-            height: 22px;
+            height: 20px;
         }
 
         .thinking-dot {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
             background: var(--text-muted);
             border-radius: 50%;
             animation: bounce 1.4s infinite;
@@ -399,39 +473,41 @@
 
         @keyframes bounce {
             0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-7px); }
+            40% { transform: translateY(-6px); }
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Input Area */
         .input-wrapper {
             width: 100%;
             max-width: 900px;
-            margin-bottom: 8px;
-            margin-top: 6px;
             padding: 0 4px;
-            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         .input-box {
+            width: 100%;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: var(--surface);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 8px 10px 8px 18px;
-            transition: all 0.2s ease;
+            padding: 6px 8px 6px 16px;
+            transition: border-color 0.2s ease;
         }
 
         .input-box:focus-within {
-            background: var(--surface-hover);
             border-color: var(--primary);
+            background: var(--surface-hover);
         }
 
         textarea {
@@ -439,13 +515,13 @@
             background: transparent;
             border: none;
             outline: none;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 500;
             color: var(--text);
             resize: none;
             height: 24px;
             min-height: 24px;
-            max-height: 130px;
+            max-height: 100px;
             line-height: 24px;
             padding: 0;
             margin: 0;
@@ -454,40 +530,152 @@
 
         textarea::placeholder {
             color: var(--text-muted);
-            opacity: 0.65;
+            opacity: 0.7;
             line-height: 24px;
         }
 
         .send-btn {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             background: var(--primary);
             border: none;
-            border-radius: 12px;
+            border-radius: 11px;
             cursor: pointer;
             display: grid;
             place-items: center;
-            transition: all 0.2s ease;
             flex-shrink: 0;
         }
 
-        .send-btn:hover:not(:disabled) { opacity: 0.9; }
         .send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-        .send-btn svg { width: 17px; height: 17px; fill: white; }
+        .send-btn svg { width: 16px; height: 16px; fill: white; }
+
+        .model-footer-info {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin: 5px 0 2px 0;
+            letter-spacing: 0.2px;
+            font-weight: 500;
+        }
+
+        .model-footer-info span {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: none;
+            place-items: center;
+            padding: 16px;
+        }
+
+        .modal-overlay.active { display: grid; }
+
+        .modal {
+            width: 100%;
+            max-width: 400px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+
+        .close-modal-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-info label { font-size: 0.88rem; font-weight: 600; display: block; }
+        .setting-info span { font-size: 0.72rem; color: var(--text-muted); }
+
+        .danger-btn {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
         @media (max-width: 768px) {
-            body { padding: 12px 10px; }
-            header { margin-bottom: 8px; }
-            h1 { font-size: 1.2rem; }
-            .status-badge { display: none; }
+            header {
+                top: 10px;
+                left: 14px;
+                right: 14px;
+            }
+
+            .workspace {
+                padding: 58px 8px 6px 8px;
+            }
+
             .message-wrapper { max-width: 90%; }
+            .sidebar-hover-zone { display: none; }
+
+            .sidebar {
+                width: 250px;
+            }
+
+            .model-footer-info {
+                font-size: 0.65rem;
+                margin: 4px 0 0 0;
+            }
         }
     </style>
 </head>
 <body>
 
+    <div class="sidebar-hover-zone" id="hover-zone"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <button class="new-chat-btn" onclick="startNewChat()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            New Chat
+        </button>
+
+        <div class="history-section-title">Recent Chats</div>
+        <div class="history-list" id="history-list">
+            <div class="history-item active">General Session</div>
+        </div>
+
+        <div class="sidebar-bottom">
+            <button class="sidebar-btn" id="open-settings-btn">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Settings
+            </button>
+        </div>
+    </aside>
+
     <header>
-        <div class="header-left">
+        <div class="header-left" id="header-brand" title="Tap to toggle sidebar">
             <div class="brand-logo">
                 <svg viewBox="0 0 24 24">
                     <rect x="3" y="3" width="7" height="7" rx="2"></rect>
@@ -496,50 +684,77 @@
                     <rect x="14" y="14" width="7" height="7" rx="2"></rect>
                 </svg>
             </div>
-            <div>
-                <h1>Widget AI</h1>
-            </div>
-            <div class="status-badge">
-                <span class="pulse-dot"></span>
-                <span>Groq Online</span>
-            </div>
+            <h1>Widget AI</h1>
         </div>
+
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-            <svg id="theme-icon" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
+            <svg id="theme-icon" viewBox="0 0 24 24"></svg>
         </button>
     </header>
 
-    <div class="chat-viewport">
-        <div id="chat-container">
-            <div class="message-group bot">
-                <div class="message-wrapper">
-                    <div class="message bot-message">
-                        Hi! I'm Widget. How can I assist you right now?
-                    </div>
-                    <div class="quick-chips-wrapper" id="quick-chips">
-                        <button class="chip" onclick="submitChip('Explain DNS resolution in simple terms')">Explain DNS resolution</button>
-                        <button class="chip" onclick="submitChip('Write a Python script to scrape website title')">Python Web Scraper</button>
-                        <button class="chip" onclick="submitChip('Key differences between TCP and UDP')">TCP vs UDP</button>
-                    </div>
-                    <div class="message-meta">
-                        <span class="message-time" id="init-time"></span>
+    <main class="workspace" id="workspace">
+        <div class="chat-viewport">
+            <div id="chat-container">
+                <div class="message-group bot">
+                    <div class="message-wrapper">
+                        <div class="message bot-message">
+                            Hi! I'm Widget. How can I assist you right now?
+                        </div>
+                        <div class="quick-chips-wrapper" id="quick-chips">
+                            <button class="chip" onclick="submitChip('Explain DNS resolution in simple terms')">Explain DNS resolution</button>
+                            <button class="chip" onclick="submitChip('Write a Python script to scrape website title')">Python Web Scraper</button>
+                            <button class="chip" onclick="submitChip('Key differences between TCP and UDP')">TCP vs UDP</button>
+                        </div>
+                        <div class="message-meta">
+                            <span class="message-time" id="init-time"></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="input-wrapper">
-        <form class="input-box glass" id="chat-form">
-            <textarea id="user-input" rows="1" placeholder="Ask anything... (Enter to send, Shift+Enter for newline)" required></textarea>
-            <button type="submit" class="send-btn" id="send-btn" aria-label="Send">
-                <svg viewBox="0 0 24 24">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-                </svg>
-            </button>
-        </form>
+        <div class="input-wrapper" id="input-wrapper">
+            <form class="input-box glass" id="chat-form">
+                <textarea id="user-input" rows="1" placeholder="Ask anything... (Enter to send)" required></textarea>
+                <button type="submit" class="send-btn" id="send-btn" aria-label="Send">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                    </svg>
+                </button>
+            </form>
+            <div class="model-footer-info">
+                Powered by <span>openai/gpt-oss-20b</span> on Groq LPUs
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal glass">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-modal-btn" id="close-settings-btn">&times;</button>
+            </div>
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <label>Typing Animation</label>
+                    <span>Simulate word stream effect</span>
+                </div>
+                <div class="setting-action">
+                    <input type="checkbox" id="stream-toggle" checked>
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <label>Clear Data</label>
+                    <span>Reset stored conversation history</span>
+                </div>
+                <div class="setting-action">
+                    <button class="danger-btn" onclick="clearAllHistory()">Reset</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -550,18 +765,60 @@
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
         const initTime = document.getElementById('init-time');
+        const sidebar = document.getElementById('sidebar');
+        const headerBrand = document.getElementById('header-brand');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const openSettingsBtn = document.getElementById('open-settings-btn');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
 
         initTime.textContent = getFormattedTime();
 
+        const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+        const sunIcon = `<circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>`;
+
+        function renderThemeIcon() {
+            themeIcon.innerHTML = document.body.classList.contains('light-mode') ? sunIcon : moonIcon;
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+        }
+        renderThemeIcon();
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            renderThemeIcon();
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        });
+
+        headerBrand.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !headerBrand.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                const heightDiff = window.innerHeight - window.visualViewport.height;
+                if (heightDiff > 120) {
+                    document.getElementById('workspace').style.height = `${window.visualViewport.height}px`;
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                } else {
+                    document.getElementById('workspace').style.height = '100dvh';
+                }
+            });
+        }
+
         input.addEventListener('input', () => {
             input.style.height = '24px';
-            input.style.height = Math.min(input.scrollHeight, 130) + 'px';
+            input.style.height = Math.min(input.scrollHeight, 100) + 'px';
             const box = input.closest('.input-box');
-            if (input.scrollHeight > 36) {
-                box.style.alignItems = 'flex-end';
-            } else {
-                box.style.alignItems = 'center';
-            }
+            box.style.alignItems = input.scrollHeight > 36 ? 'flex-end' : 'center';
         });
 
         input.addEventListener('keydown', (e) => {
@@ -571,30 +828,31 @@
             }
         });
 
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (!prefersDark) {
-            document.body.classList.add('light-mode');
-            updateThemeIcon();
-        }
-
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            updateThemeIcon();
-            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        openSettingsBtn.addEventListener('click', () => modalOverlay.classList.add('active'));
+        closeSettingsBtn.addEventListener('click', () => modalOverlay.classList.remove('active'));
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) modalOverlay.classList.remove('active');
         });
 
-        function updateThemeIcon() {
-            if (document.body.classList.contains('light-mode')) {
-                themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
-            } else {
-                themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-            }
+        function clearAllHistory() {
+            modalOverlay.classList.remove('active');
+            startNewChat();
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-mode');
-            updateThemeIcon();
+        function startNewChat() {
+            chatContainer.innerHTML = `
+                <div class="message-group bot">
+                    <div class="message-wrapper">
+                        <div class="message bot-message">
+                            Hi! I'm Widget. How can I assist you right now?
+                        </div>
+                        <div class="message-meta">
+                            <span class="message-time">${getFormattedTime()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            sidebar.classList.remove('mobile-open');
         }
 
         function getFormattedTime() {
@@ -651,7 +909,16 @@
         }
 
         function streamMarkdownText(element, fullText, metaElement) {
+            const useStream = document.getElementById('stream-toggle').checked;
             element.classList.remove('thinking');
+
+            if (!useStream) {
+                element.innerHTML = marked.parse(fullText);
+                addCopyButton(metaElement, fullText);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                return;
+            }
+
             const words = fullText.split(' ');
             let currentIndex = 0;
             element.innerHTML = '';
