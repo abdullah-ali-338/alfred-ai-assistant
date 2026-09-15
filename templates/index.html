@@ -279,58 +279,58 @@
 
         .header-brand {
             position: fixed;
-            top: 48%;
+            top: 45%;
             left: 50%;
-            transform: translate(-50%, -200px);
+            transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             z-index: 110;
             cursor: pointer;
             pointer-events: auto;
             text-align: center;
-            transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        left 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        top 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        gap 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        left 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        top 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        gap 0.55s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .brand-logo {
-            width: 58px;
-            height: 58px;
+            width: 62px;
+            height: 62px;
             background: var(--primary);
-            border-radius: 16px;
+            border-radius: 18px;
             display: grid;
             place-items: center;
             flex-shrink: 0;
-            box-shadow: 0 10px 25px rgba(16, 163, 127, 0.25);
-            transition: width 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        height 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        border-radius 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 12px 28px rgba(16, 163, 127, 0.28);
+            transition: width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        height 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-radius 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .brand-logo svg {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             fill: var(--bg);
-            transition: width 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        height 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                        height 0.55s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .brand-titles {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
         }
 
         h1 {
             font-size: 1.85rem;
             font-weight: 700;
             letter-spacing: -0.5px;
-            transition: font-size 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: font-size 0.55s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .brand-subtitle {
@@ -338,7 +338,7 @@
             color: var(--text-muted);
             font-weight: 500;
             opacity: 1;
-            transition: opacity 0.3s ease, height 0.3s ease;
+            transition: opacity 0.25s ease;
         }
 
         body.chat-active .header-brand {
@@ -388,7 +388,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
-            padding: 72px 16px 8px 16px;
+            padding: 72px 16px 12px 16px;
             min-height: 0;
             position: relative;
         }
@@ -403,7 +403,7 @@
             flex-direction: column;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.35s ease;
         }
 
         body.chat-active .chat-viewport {
@@ -437,19 +437,18 @@
             align-items: center;
             flex-shrink: 0;
             position: absolute;
-            top: 50%;
+            bottom: 28px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        top 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        left 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                        max-width 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(-50%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                        bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                        max-width 0.55s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 105;
         }
 
         body.chat-active .input-wrapper {
             position: relative;
-            top: auto;
+            bottom: auto;
             left: auto;
             transform: none;
             max-width: 900px;
@@ -466,7 +465,7 @@
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 8px 10px 8px 18px;
-            transition: border-color 0.2s ease, background 0.2s ease, padding 0.3s ease;
+            transition: border-color 0.2s ease, background 0.2s ease, padding 0.25s ease;
         }
 
         body.chat-active .input-box {
@@ -483,7 +482,7 @@
             background: transparent;
             border: none;
             outline: none;
-            font-size: 0.98rem;
+            font-size: 0.96rem;
             font-weight: 500;
             color: var(--text);
             resize: none;
@@ -539,7 +538,7 @@
             justify-content: center;
             gap: 8px;
             margin-top: 14px;
-            transition: opacity 0.35s ease, transform 0.35s ease;
+            transition: opacity 0.35s ease;
         }
 
         body.chat-active .quick-chips-container {
@@ -877,21 +876,21 @@
             }
 
             .header-brand {
-                top: 38%;
+                top: 45%;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 gap: 12px;
             }
 
             .brand-logo {
-                width: 52px;
-                height: 52px;
-                border-radius: 15px;
+                width: 56px;
+                height: 56px;
+                border-radius: 16px;
             }
 
             .brand-logo svg {
-                width: 24px;
-                height: 24px;
+                width: 26px;
+                height: 26px;
             }
 
             h1 {
@@ -904,7 +903,7 @@
 
             body.chat-active .header-brand {
                 top: 14px;
-                left: 52px;
+                left: 50px;
                 transform: none;
                 gap: 8px;
             }
@@ -925,33 +924,21 @@
             }
 
             .workspace {
-                padding: 64px 8px 8px 8px;
+                padding: 64px 8px 12px 8px;
             }
 
             .input-wrapper {
-                top: auto;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
+                bottom: 16px;
                 width: calc(100% - 16px);
                 max-width: 100%;
             }
 
             body.chat-active .input-wrapper {
-                bottom: auto;
-                transform: none;
                 width: 100%;
             }
 
             .quick-chips-container {
-                display: flex;
-                gap: 6px;
-                margin-top: 12px;
-            }
-
-            .chip {
-                padding: 6px 12px;
-                font-size: 0.76rem;
+                display: none !important;
             }
 
             .message-wrapper { max-width: 90%; }
@@ -1082,6 +1069,7 @@
         const openSettingsBtn = document.getElementById('open-settings-btn');
         const closeSettingsBtn = document.getElementById('close-settings-btn');
         const quickChips = document.getElementById('quick-chips');
+        const inputWrapper = document.getElementById('input-wrapper');
 
         const questionBank = [
             "Explain DNS resolution in simple terms",
@@ -1153,10 +1141,11 @@
             window.visualViewport.addEventListener('resize', () => {
                 const heightDiff = window.innerHeight - window.visualViewport.height;
                 if (heightDiff > 120) {
-                    document.getElementById('workspace').style.height = `${window.visualViewport.height}px`;
+                    const offset = heightDiff + 8;
+                    inputWrapper.style.transform = `translateY(-${offset}px)`;
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 } else {
-                    document.getElementById('workspace').style.height = '100dvh';
+                    inputWrapper.style.transform = '';
                 }
             });
         }
@@ -1193,6 +1182,7 @@
             sidebar.classList.remove('mobile-open');
             input.value = '';
             input.style.height = '26px';
+            inputWrapper.style.transform = '';
             renderShuffledChips();
         }
 
